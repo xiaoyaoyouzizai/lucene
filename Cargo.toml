@@ -1,0 +1,16 @@
+[package]
+name = "yclucene"
+version = "0.1.0"
+edition = "2021"
+authors = ["Ian Cong"]
+
+[lib]
+name = "lucene"
+path = "src/lib.rs"
+
+[[bin]]
+name = "example"
+path = "src/main.rs"
+
+[dependencies]
+fxhash="0.2.1"
