@@ -19,10 +19,11 @@ struct Version {
 
 pub struct Segment {
     version: Version,
+    max_doc: u32,
 }
 
 impl Segment {
-    pub fn read_latest_commit(filename: &str) -> crate::Result<()> {
+    pub fn read_latest_commit(dir: &str, filename: &str) -> crate::Result<()> {
         println!("filename: {}", filename);
         let data = fs::read(filename).unwrap();
         let mut input = DataInput::new(ChecksumByteInput::new(&data[..]));
@@ -40,9 +41,9 @@ impl Segment {
         println!("indexHeaderSuffix: {}", index_header_suffix);
 
         let lucene_version = Version {
-            major: input.read_int(),
-            minor: input.read_int(),
-            bugfix: input.read_int(),
+            major: input.read_vint(),
+            minor: input.read_vint(),
+            bugfix: input.read_vint(),
             prerelease: 0,
         };
         println!("version: {:#?}", lucene_version);
@@ -58,6 +59,7 @@ impl Segment {
 
         let num_segments = input.read_int();
         println!("num_segments: {}", num_segments);
+
         let mut min_version = Version {
             major: 0,
             minor: 0,
@@ -70,6 +72,33 @@ impl Segment {
             min_version.bugfix = input.read_vint();
         }
         println!("min_version: {:#?}", min_version);
+
+        let mut total_docs = 0;
+        for _ in 0..num_segments {
+            let seg_name = input.read_string();
+            println!("seg_name: {}", seg_name);
+            let index_header_id = input.read_bytes(16);
+            println!("indexHeaderID: {:02X?}", index_header_id);
+            let codec = input.read_string();
+            println!("codec: {}", codec);
+
+            let segment = Segment::read(&(dir.to_owned() + "/" + &seg_name + ".si")).unwrap();
+            total_docs += segment.max_doc;
+
+            let del_gen = input.read_long();
+            println!("del_gen: {}", del_gen);
+
+            let del_count = input.read_int();
+            println!("del_count: {}", del_count);
+
+            let field_infos_gen = input.read_long();
+            let dv_gen = input.read_long();
+            let soft_del_count = input.read_int();
+            println!("soft_del_count: {}", soft_del_count);
+
+            break;
+        }
+
         Ok(())
     }
 
@@ -144,6 +173,7 @@ impl Segment {
 
         Ok(Segment {
             version: lucene_version,
+            max_doc: doc_count,
         })
     }
 }

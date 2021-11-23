@@ -17,8 +17,8 @@ impl<'a> Directory<'a> {
                 latest_commit = path.into_os_string().into_string().unwrap();
             }
         }
-        let dir = Directory { dir, latest_commit };
-        Segment::read_latest_commit(&dir.latest_commit);
-        Ok(dir)
+        let directory = Directory { dir, latest_commit };
+        Segment::read_latest_commit(dir,&directory.latest_commit);
+        Ok(directory)
     }
 }

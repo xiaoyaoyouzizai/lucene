@@ -1,6 +1,7 @@
 use std::env;
 
 use lucene::store::Directory;
+use lucene::core::Segment;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -10,5 +11,5 @@ fn main() {
         return;
     }
 
-    let dir = Directory::open(&args[1]).unwrap();
+    let _dir = Directory::open(&args[1]).unwrap();
 }
