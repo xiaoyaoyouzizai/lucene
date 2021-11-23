@@ -14,7 +14,7 @@ impl<'a> Directory<'a> {
             let path = entry.path();
             let filename = path.file_name().unwrap().to_str().unwrap();
             if let Some(0) = filename.find("segments_") {
-                latest_commit = String::from(filename);
+                latest_commit = path.into_os_string().into_string().unwrap();
             }
         }
         let dir = Directory { dir, latest_commit };

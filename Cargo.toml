@@ -14,3 +14,4 @@ path = "src/main.rs"
 
 [dependencies]
 fxhash="0.2.1"
+crc32fast = "1.2.1"
