@@ -18,7 +18,7 @@ impl<'a> Directory<'a> {
             }
         }
         let directory = Directory { dir, latest_commit };
-        Segment::read_latest_commit(dir,&directory.latest_commit);
+        Segment::read_commit(dir,&directory.latest_commit);
         Ok(directory)
     }
 }

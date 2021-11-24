@@ -23,7 +23,7 @@ pub struct Segment {
 }
 
 impl Segment {
-    pub fn read_latest_commit(dir: &str, filename: &str) -> crate::Result<()> {
+    pub fn read_commit(dir: &str, filename: &str) -> crate::Result<()> {
         println!("filename: {}", filename);
         let data = fs::read(filename).unwrap();
         let mut input = DataInput::new(ChecksumByteInput::new(&data[..]));
@@ -96,8 +96,29 @@ impl Segment {
             let soft_del_count = input.read_int();
             println!("soft_del_count: {}", soft_del_count);
 
-            break;
+            let mut sci_id: Option<Vec<u8>> = None;
+            let marker = input.read_byte();
+            if marker == 1 {
+                sci_id = Some(input.read_bytes(16));
+            }
+            println!("sciId: {:02X?}", sci_id.unwrap());
+            let field_infos_files = input.read_string_set();
+            println!("field_infos_files: {:#?}", field_infos_files);
+
+            let num_dv_fields = input.read_int();
+            println!("numDVFields: {}", num_dv_fields);
+
+            if (num_dv_fields > 0) {
+                for _ in 0..num_dv_fields {
+                    println!("{}", input.read_int());
+                    println!("{:#?}", input.read_string_set());
+                }
+            }
         }
+
+        let user_data = input.read_string_map();
+        println!("{:#?}", user_data);
+        println!("total_docs: {}", total_docs);
 
         Ok(())
     }
