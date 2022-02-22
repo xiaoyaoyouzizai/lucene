@@ -1,5 +1,5 @@
 [package]
-name = "yclucene"
+name = "lucene"
 version = "0.1.0"
 edition = "2021"
 authors = ["Ian Cong"]

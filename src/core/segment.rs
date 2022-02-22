@@ -108,7 +108,7 @@ impl Segment {
             let num_dv_fields = input.read_int();
             println!("numDVFields: {}", num_dv_fields);
 
-            if (num_dv_fields > 0) {
+            if num_dv_fields > 0 {
                 for _ in 0..num_dv_fields {
                     println!("{}", input.read_int());
                     println!("{:#?}", input.read_string_set());
